@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verbum Diei</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: transparent;
+            color: #37352f;
+        }
+        .widget-container {
+            text-align: center;
+            padding: 20px;
+            border: 1px solid #e1e1e1;
+            border-radius: 10px;
+            background-color: #f7f6f3;
+            width: 100%;
+            max-width: 300px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        }
+        .title {
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: #787774;
+            margin-bottom: 10px;
+        }
+        .word {
+            font-size: 24px;
+            font-weight: bold;
+            margin: 0 0 5px 0;
+        }
+        .definition {
+            font-size: 14px;
+            font-style: italic;
+            color: #37352f;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="widget-container">
+        <div class="title">Verbum Diei</div>
+        <div class="word" id="latin-word">Loading...</div>
+        <div class="definition" id="latin-def">Fetching library...</div>
+    </div>
+
+    <script>
+        const sheetURL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTiFmE1TSjPo1ZCnlLoKAIfT2US35qfnJNhjkYP44WEkXYrPWdwt4nTuacYfUi07vjebj4YiM97ZCwQ/pub?output=tsv';
+
+        async function fetchWordOfTheDay() {
+            try {
+                // Fetch the data from your Google Sheet
+                const response = await fetch(sheetURL);
+                const data = await response.text();
+
+                const rows = data.split('\n').slice(1);
+                
+                const latinWords = [];
+                
+                rows.forEach(row => {
+                    const columns = row.split('\t'); // Looks for the Tab separation
+                    if (columns.length >= 2 && columns[0].trim() !== '') {
+                        latinWords.push({ 
+                            word: columns[0].trim(), 
+                            def: columns[1].trim() 
+                        });
+                    }
+                });
+
+                if (latinWords.length === 0) {
+                    throw new Error("No words found. Check your sheet.");
+                }
+
+                const today = new Date();
+                const daysSinceEpoch = Math.floor(today.getTime() / (1000 * 60 * 60 * 24));
+                
+                const wordIndex = daysSinceEpoch % latinWords.length;
+                const wordOfTheDay = latinWords[wordIndex];
+
+                document.getElementById('latin-word').innerText = wordOfTheDay.word;
+                document.getElementById('latin-def').innerText = wordOfTheDay.def;
+
+            } catch (error) {
+                document.getElementById('latin-word').innerText = "Error";
+                document.getElementById('latin-def').innerText = "Could not connect to Sheet.";
+                console.error(error);
+            }
+        }
+
+        fetchWordOfTheDay();
+    </script>
+
+</body>
+</html>
