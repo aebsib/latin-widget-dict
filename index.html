@@ -9,11 +9,16 @@
         :root {
             --page-bg-light: #ffffff;
             --page-bg-dark: #191919;
+            --widget-bg-light: #ffffff;
+            --widget-bg-dark: #f8f5e6; /* Cream color */
         }
 
         @media (prefers-color-scheme: light) {
             body {
                 background-color: var(--page-bg-light);
+            }
+            .widget-container {
+                background-color: var(--widget-bg-light);
             }
         }
 
@@ -21,9 +26,12 @@
             body {
                 background-color: var(--page-bg-dark);
             }
+            .widget-container {
+                background-color: var(--widget-bg-dark);
+            }
         }
 
-        /* Original widget styling - UNCHANGED */
+        /* Original widget styling - UNCHANGED except for background-color removed */
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
             display: flex;
@@ -37,7 +45,7 @@
             padding: 20px;
             border: 1px solid #e1e1e1;
             border-radius: 10px;
-            background-color: transparent;
+            /* background-color removed - now controlled by media queries */
             width: 100%;
             max-width: 300px;
             box-shadow: 0 4px 6px rgba(0,0,0,0.05);
